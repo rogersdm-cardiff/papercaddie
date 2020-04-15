@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body %}
+    <a href="{% url 'index' %}">Home</a>
+    <span style="float:right;">
+    {% if last_pk %}<a href="{% url 'add' last_pk %}">Prev</a>{% else %}Prev{% endif %} | {% if next_pk %}<a href="{% url 'add' next_pk %}">Next</a>{% else %}Next{% endif %}
+    </span>
+    <h2>{{ paper.title }}
+        <small>{{ paper.year }}</small>
+    </h2>
+    <h3>{{ paper.authors }}</h3>
+
+    <div class="progress" style="margin: 0; margin-left: 90px; position: absolute; top: 20px; width: 70%; height: 20px;">
+        <div class="progress-bar progress-bar-default progress-bar-striped" style="width: {{ percentages.progress }}%">{{ totals.progress }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-info progress-bar-striped" style="width: {{ percentages.skipped }}%">{{ totals.skipped }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: {{ percentages.rejected }}%">{{ totals.rejected }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: {{ percentages.background }}%">{{ totals.background }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-success progress-bar-striped" style="width: {{ percentages.completed }}%">{{ totals.completed }}
+            <span class="sr-only"></span>
+        </div>
+    </div>
+
+    <div style="margin: 10px;">
+        {% for link in links %}
+            <a href="{{ link }}" target="_blank">{{ link }}</a><br>
+        {% endfor %}
+        <a href="https://scholar.google.co.uk/scholar?hl=en&as_sdt=0%2C5&q={{ search }}&btnG=" target="_blank">Google
+            Scholar Search</a>
+    </div>
+
+    <form class="form-inline" action="{% url 'add' paper.pk %}" method="post">
+        {% csrf_token %}
+        <div class="form-group" style="margin: 10px;">
+            <div class="input-group">
+                <div class="input-group-addon"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></div>
+                <input type="text" class="form-control" id="paper_location" name="paper_location"
+                       placeholder="File Name">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Add File</button>
+        <br>
+        <div class="form-group" style="margin: 10px;">
+            <div class="input-group">
+                <div class="input-group-addon"><span class="glyphicon glyphicon-link" aria-hidden="true"></span></div>
+                <input type="text" class="form-control" id="paper_link" name="paper_link" placeholder="URL">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Download Direct</button>
+    </form>
+
+    <a href="{% url 'add' paper.pk 'skip' %}" class="btn btn-warning" style="margin: 10px;">Skip</a>
+{% endblock %}

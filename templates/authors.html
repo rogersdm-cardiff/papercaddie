@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body %}
+{#    <h1>Data Extraction</h1>#}
+    <div class="progress">
+        <div class="progress-bar progress-bar-default progress-bar-striped" style="width: {{ percentages.progress }}%">{{ totals.progress }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-info progress-bar-striped" style="width: {{ percentages.skipped }}%">{{ totals.skipped }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: {{ percentages.rejected }}%">{{ totals.rejected }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: {{ percentages.background }}%">{{ totals.background }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-success progress-bar-striped" style="width: {{ percentages.completed }}%">{{ totals.completed }}
+            <span class="sr-only"></span>
+        </div>
+    </div>
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        {% for author in authors %} 
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading-{{ author.id }}">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                       href="#collapse-{{ author.id }}" aria-expanded="false" aria-controls="collapse-{{ author.id }}">
+                        {{ author.forename }} {{ author.surname }} ({{ author.papers.all|length }})
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse-{{ author.id }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ author.id }}">
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                            <th>Author</th>
+                            <th>Action</th>
+                        </tr>
+                    {% for paper in author.papers.all %}
+                        <tr>
+                            <td>{{ paper.title }} ({{ paper.year }})<br><i>{{ paper.authors }}</i></td>
+                            {% if paper.progress %}
+                            <td>{{ paper.comments }}</td>
+                            <td><a href="{% url 'edit' paper.id %}" class="btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Extract Data</a></td>
+                            {% else %}
+                            <td>Could not access paper</td>
+                            <td><a href="{% url 'add' paper.id %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add PDF</a></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}

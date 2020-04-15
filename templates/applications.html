@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load cite %}
+{% load comma_replace %}
+{% load makecell %}
+
+{% block css %}
+     <style>
+        .container {
+            width: 100%;
+        }
+    </style>
+
+{% endblock %}
+
+{% load staticfiles %}
+{% block body %}
+    <table class="table table-striped">
+        <tr>
+            <th>Authors</th>
+            <th>Objective</th>
+            <th>Morphological</th>
+            <th>Syntax</th>
+            <th>Semantic</th>
+            <th>Dimensionality</th>
+            <th>Supervised</th>
+            <th>Unsupervised</th>
+            <th>Association</th>
+        </tr>
+    {% for app in applications %}
+        <tr>
+            <td>{{ app.pk }} - <i>{{ app.authors }}</i></td>
+            <td>{{ app.objective }}</td>
+            <td>{{ app.morphological_analysis }}</td>
+            <td>{{ app.syntax_analysis }}</td>
+            <td>{{ app.semantic_analysis }}</td>
+            <td>{{ app.dimensionality_reduction }}</td>
+            <td>{{ app.supervised_learning }}</td>
+            <td>{{ app.unsupervised_learning }}</td>
+            <td>{{ app.association }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <pre>
+\fontsize{8}{12}
+\sffamily
+\begin{landscape}
+    \begin{longtable}{| *2{p{2cm}} | p{2.3cm} *2{p{2cm}} p{2.3cm} | *3{p{2.5cm}} |}
+    \hline
+    {\bf Authors} & {\bf Objective} & {\bf Morphological Analysis} & {\bf Syntactic Analysis} & {\bf Semantic Analysis} & {\bf Dimensionality Reduction} & {\bf Supervised Learning} & {\bf Unsupervised Learning} & {\bf Association} \\ \hline
+    \endhead
+{% for app in applications %}
+    {{ app.authors|cite }} & {{ app.objective }} & {{ app.morphological_analysis|comma_replace|safe }} & {{ app.syntax_analysis|comma_replace|safe }} & {{ app.semantic_analysis|comma_replace|safe }} & {{ dimensionality_reduction|comma_replace|safe }} & {{ app.supervised_learning|safe|makecell }} & {{ app.unsupervised_learning|safe|makecell }} & {{ app.association|safe|makecell }} \\ \hline
+{% endfor %}
+    \end{longtable}
+\end{landscape}
+\normalsize
+    </pre>
+{% endblock %}

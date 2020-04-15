@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block css %}
+     <style>
+        .container {
+            width: 100%;
+        }
+    </style>
+
+{% endblock %}
+
+{% load staticfiles %}
+{% block body %}
+    <table class="table table-striped">
+        <tr>
+            <th>Title</th>
+            <th>Authors</th>
+            <th>Comments</th>
+        </tr>
+    {% for paper in papers %}
+        <tr>
+            <td>{{ paper.title }} ({{ paper.year }})</td>
+            <td><i>{{ paper.authors }}</i></td>
+            {% if paper.progress %}
+            <td>{{ paper.comments }}</td>
+            {% else %}
+            <td>Could not access paper</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

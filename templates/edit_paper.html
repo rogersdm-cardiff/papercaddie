@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+    <style>
+        body {
+            border: 5px solid {{ paper_colour }};
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <a href="{% url 'index' %}">Home</a>
+    <span style="float:right;">
+    {% if last_pk %}<a href="{% url 'edit' last_pk %}">Prev</a>{% else %}Prev{% endif %} | {% if next_pk %}
+        <a href="{% url 'edit' next_pk %}">Next</a>{% else %}Next{% endif %}
+    </span>
+    <a id="toggle" href="#" class="btn btn-xs btn-default float-right" style="right: 2%; top: 50px; position: fixed;">Notes
+        ({{ note_length }})</a>
+    <a id="extract" href="{% url 'extract' paper.pk %}" target="_blank" class="btn btn-xs btn-default float-right" style="right: 2%; top: 80px; position: fixed;">Extract</a>
+    <a id="save" href="#" class="btn btn-xs btn-primary float-right btn-submit"
+       style="right: 2%; top: 110px; position: fixed;">Save</a>
+    <a id="accept" href="#" class="btn btn-xs btn-success float-right btn-submit"
+       style="right: 2%; bottom: 100px; position: fixed;">Accept</a>
+    <a id="reject" href="#" class="btn btn-xs btn-danger float-right btn-submit"
+       style="right: 2%; bottom: 70px; position: fixed;">Reject</a>
+    <a id="background" href="#" class="btn btn-xs btn-warning float-right btn-submit"
+       style="right: 2%; bottom: 40px; position: fixed;">BGround</a>
+    <a id="skip" href="#" class="btn btn-xs btn-info float-right btn-submit"
+       style="right: 2%; bottom: 10px; position: fixed;">Skip</a>
+
+    <div class="progress" style="margin: 0; margin-left: 90px; position: absolute; top: 20px; max-width: 1500px; width: 50%; height: 20px;">
+        <div class="progress-bar progress-bar-default progress-bar-striped" style="width: {{ percentages.progress }}%">{{ totals.progress }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-info progress-bar-striped" style="width: {{ percentages.skipped }}%">{{ totals.skipped }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: {{ percentages.rejected }}%">{{ totals.rejected }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: {{ percentages.background }}%">{{ totals.background }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-success progress-bar-striped" style="width: {{ percentages.completed }}%">{{ totals.completed }}
+            <span class="sr-only"></span>
+        </div>
+    </div>
+
+    <h4>{{ paper.title }} <small>{{ paper.comments }}</small></h4>
+    <div id='pdf-block' class='embed-responsive col-sm-9' style='padding-bottom:150%'>
+        <div id="example1"></div>
+    </div>
+    <div id='input-block' class='col-sm-3'>
+        <form id="input-form" class="form form-horizontal" action="{% url 'edit' paper.pk %}" method="post">
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingZero">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
+                                Details
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseZero" class="panel-collapse collapse in" role="tabpanel"
+                         aria-labelledby="headingZero"
+                         style="padding: 5px;">
+                        {% csrf_token %}
+                        {{ form }}
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingTwo">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Applications ({{ app_forms|length }})
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo"
+                         style="padding: 5px;">
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            {% for app_form in app_forms %}
+                                <li role="presentation" class="{% if forloop.first %}active{% endif %}"><a
+                                        href="#app_{{ forloop.counter }}"
+                                        aria-controls="app_{{ forloop.counter }}" role="tab"
+                                        data-toggle="tab">App {{ forloop.counter }}</a></li>
+                            {% endfor %}
+                            <li role="presentation">
+                                <a href='#' class="btn btn btn-success btn-tab btn-tab" type="submit" id="add-app"
+                                   name="add-app">Add</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            {% for app_form in app_forms %}
+                                <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}"
+                                     id="app_{{ forloop.counter }}">
+                                    {{ app_form }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                Data Sets ({{ data_forms|length }})
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne"
+                         style="padding: 5px;">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            {% for data_form in data_forms %}
+                                <li role="presentation" class="{% if forloop.first %}active{% endif %}"><a
+                                        href="#data_{{ forloop.counter }}"
+                                        aria-controls="data_{{ forloop.counter }}" role="tab"
+                                        data-toggle="tab">Data Set {{ forloop.counter }}</a></li>
+                            {% endfor %}
+                            <li role="presentation">
+                                <a href='#' class="btn btn-success btn-tab" type="submit" id="add-data-set">Add</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            {% for data_form in data_forms %}
+                                <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}"
+                                     id="data_{{ forloop.counter }}">
+                                    {{ data_form }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingThree">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Infrastructures ({{ infra_forms|length }})
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="headingThree"
+                         style="padding: 5px;">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            {% for infra_form in infra_forms %}
+                                <li role="presentation" class="{% if forloop.first %}active{% endif %}"><a
+                                        href="#infra_{{ forloop.counter }}"
+                                        aria-controls="infra_{{ forloop.counter }}" role="tab"
+                                        data-toggle="tab">Infrastructure {{ forloop.counter }}</a></li>
+                            {% endfor %}
+                            <li role="presentation">
+                                <a href='#' class="btn btn-success btn-tab" type="submit" id="add-infra"
+                                   name="add-infra">Add</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            {% for infra_form in infra_forms %}
+                                <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}"
+                                     id="infra_{{ forloop.counter }}">
+                                    {{ infra_form }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingFour">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Results ({{ results_forms|length }})
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour"
+                         style="padding: 5px;">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            {% for results_form in results_forms %}
+                                <li role="presentation" class="{% if forloop.first %}active{% endif %}"><a
+                                        href="#results_{{ forloop.counter }}"
+                                        aria-controls="results_{{ forloop.counter }}" role="tab"
+                                        data-toggle="tab">Results {{ forloop.counter }}</a></li>
+                            {% endfor %}
+                            <li role="presentation">
+                                <a href='#' class="btn btn-success btn-tab" type="submit" id="add-result">Add</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            {% for results_form in results_forms %}
+                                <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}"
+                                     id="results_{{ forloop.counter }}">
+                                    {{ results_form }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>PDFObject.embed("{% url 'pdf' paper.id %}", "#example1");</script>
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            var docwidth = $(document).width();
+
+            var pdf_div = $('#pdf-block');
+            var input_div = $('#input-block');
+            var reload = true;
+            var last_btn = '';
+            var h = $(window).height() - pdf_div.position().top - 15;
+            pdf_div.css('padding-bottom', '').css('height', h);
+            input_div.css('overflow-y', 'scroll').css('height', h);
+
+            function submit_form() {
+                if (reload) {
+                    var frm = $('#input-form');
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        success: function (data) {
+                            if (last_btn != 'save') {
+                                frm.html(data);
+                                $('.btn-tab').click(tab_click);
+                            }
+                        },
+                        error: function (data) {
+                            alert("Something went wrong, please refresh the page!");
+                        }
+                    });
+                    return false;
+                }
+            }
+
+            function btn_click() {
+                last_btn = $(this).attr('id');
+                var input = $("<input>")
+                        .attr("type", "hidden")
+                        .attr("name", "btn-submit").val(last_btn);
+                reload = true;
+
+                if ($(this).attr('id') != "save") {
+                    var txt = prompt("Please add comments", "");
+                    if (txt === null) {
+                        return; //break out of the function early
+                    }
+                    var box = $("#id_paper-comments");
+                    box.val(box.val() + $.trim(txt));
+                    reload = false;
+                }
+
+                $('#input-form').append($(input)).submit();
+            }
+
+            function tab_click() {
+                last_btn = $(this).attr('id');
+                var input = $("<input>")
+                        .attr("type", "hidden")
+                        .attr("name", "btn-submit").val(last_btn);
+                reload = true;
+
+                $('#input-form').append($(input)).submit();
+            }
+
+            var toggle = $('#toggle');
+
+            toggle.click(function () {
+                if (pdf_div.hasClass('col-sm-9')) {
+                    pdf_div.addClass('col-sm-12').removeClass('col-sm-9');
+                    input_div.hide();
+                } else {
+                    pdf_div.addClass('col-sm-9').removeClass('col-sm-12');
+                    input_div.show();
+                }
+            }).click();
+
+            $('#input-form').submit(submit_form);
+
+            $('.btn-tab').click(tab_click);
+
+            $('.btn-submit').click(btn_click);
+
+            if (docwidth > 1760) {
+                toggle.click();
+                $('.container').css('width','70%');
+{#                pdf_div.removeClass('col-sm-7').addClass('col-sm-9');#}
+{#                input_div.removeClass('col-sm-5').addClass('col-sm-3');#}
+            }
+        });
+    </script>
+
+{% endblock %}

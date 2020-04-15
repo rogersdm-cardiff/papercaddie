@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load cite %}
+{% load comma_replace %}
+{% load makecell %}
+
+{% block css %}
+     <style>
+        .container {
+            width: 100%;
+        }
+    </style>
+
+{% endblock %}
+
+{% load staticfiles %}
+{% block body %}
+    <table class="table table-striped">
+        <tr>
+            <th>PK</th>
+            <th>Title</th>
+            <th>Authors</th>
+            <th>Citation</th>
+            <th>Objective</th>
+            <th>Morphological</th>
+            <th>Syntax</th>
+            <th>Semantic</th>
+            <th>Dimensionality</th>
+            <th>Learning</th>
+            <th>Type</th>
+            <th>Source</th>
+            <th>Volume</th>
+            <th>Coverage</th>
+        </tr>
+    {% for app in results %}
+        <tr>
+            <td>{{ app.pk }}</td>
+            <td>{{ app.title }}</td>
+            <td>{{ app.authors }}</td>
+            <td>{{ app.citation }}</td>
+            <td>{{ app.objective }}</td>
+            <td>{{ app.morphological_analysis }}</td>
+            <td>{{ app.syntax_analysis }}</td>
+            <td>{{ app.semantic_analysis }}</td>
+            <td>{{ app.dimensionality_reduction }}</td>
+            <td>{{ app.learning }}</td>
+            <td>{{ app.type }}</td>
+            <td>{{ app.source }}</td>
+            <td>{{ app.volume }}</td>
+            <td>{{ app.coverage }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

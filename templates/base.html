@@ -1,0 +1,71 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Data Extractor</title>
+
+    <link rel="shortcut icon" href="{% static "favicon/favicon.ico" %}">
+
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/jquery-ui.css" %}" rel="stylesheet">
+    {% block css %}{% endblock %}
+
+    <script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
+    <script src="{% static "js/jquery-ui.js" %}"></script>
+    <script src="{% static "js/bootstrap.js" %}"></script>
+    <script src="{% static "js/pdfobject.min.js" %}"></script>
+    {% block js %}{% endblock %}
+
+
+    <style>
+        .pdfobject-container {
+            height: 500px;
+        }
+
+        .pdfobject {
+            border: 1px solid #666;
+        }
+
+        #input-block {
+            font-size: 80%;
+        }
+
+        #input-block .panel-title {
+            font-size: 110%;
+        }
+
+        #input-block .btn, #input-block .form-control {
+            font-size: 100%;
+        }
+
+        #input-block .nav>li>a {
+            padding: 3px 8px;
+        }
+
+        #input-block label {
+            margin-top: 5px;
+            margin-bottom: 0px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="main-container container">
+    <div class="row">
+        <br id="first-br">
+        {% block body %}{% endblock %}
+    </div>
+</div>
+
+{% block script %}{% endblock %}
+
+<footer class="footer">
+      <div class="container">
+        <p class="text-muted"></p>
+      </div>
+</footer>
+</body>
+</html>

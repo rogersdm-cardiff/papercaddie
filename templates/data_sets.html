@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load cite %}
+{% load comma_replace %}
+{% load makecell %}
+
+{% block css %}
+     <style>
+        .container {
+            width: 100%;
+        }
+    </style>
+
+{% endblock %}
+
+{% load staticfiles %}
+{% block body %}
+    <table class="table table-striped">
+        <tr>
+            <th>Authors</th>
+            <th>Type</th>
+            <th>Source</th>
+            <th>Volume</th>
+            <th>Coverage</th>
+        </tr>
+    {% for app in data_sets %}
+        <tr>
+            <td>{{ app.pk }} - <i>{{ app.authors }}</i></td>
+            <td>{{ app.type }}</td>
+            <td>{{ app.source }}</td>
+            <td>{{ app.volume }}</td>
+            <td>{{ app.coverage }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

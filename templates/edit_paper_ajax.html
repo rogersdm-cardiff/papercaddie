@@ -1,0 +1,161 @@
+{% load staticfiles %}
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingZero">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                   href="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
+                    Details
+                </a>
+            </h4>
+        </div>
+        <div id="collapseZero" class="panel-collapse collapse {{ details_in }}" role="tabpanel"
+             aria-labelledby="headingZero"
+             style="padding: 5px;">
+            {% csrf_token %}
+            {{ form }}
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                   href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Applications ({{ app_forms|length }})
+                </a>
+            </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse {{ apps_in }}" role="tabpanel" aria-labelledby="headingTwo"
+             style="padding: 5px;">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                {% for app_form in app_forms %}
+                    <li role="presentation" class="{% if forloop.last %}active{% endif %}"><a
+                            href="#app_{{ forloop.counter }}"
+                            aria-controls="app_{{ forloop.counter }}" role="tab"
+                            data-toggle="tab">App {{ forloop.counter }}</a></li>
+                {% endfor %}
+                <li role="presentation" style="padding: 3px">
+                    <a href='#' class="btn btn-success btn-tab" id="add-app" name="add-app">Add</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                {% for app_form in app_forms %}
+                    <div role="tabpanel" class="tab-pane {% if forloop.last %}active{% endif %}"
+                         id="app_{{ forloop.counter }}">
+                        {{ app_form }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                   href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    Data Sets ({{ data_forms|length }})
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse {{ data_sets_in }}" role="tabpanel" aria-labelledby="headingOne"
+             style="padding: 5px;">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                {% for data_form in data_forms %}
+                    <li role="presentation" class="{% if forloop.last %}active{% endif %}"><a
+                            href="#data_{{ forloop.counter }}"
+                            aria-controls="data_{{ forloop.counter }}" role="tab"
+                            data-toggle="tab">Data Set {{ forloop.counter }}</a></li>
+                {% endfor %}
+                <li role="presentation" style="padding: 3px">
+                    <a href='#' class="btn btn-success btn-tab" id="add-data-set" name="add-data-set">Add</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                {% for data_form in data_forms %}
+                    <div role="tabpanel" class="tab-pane {% if forloop.last %}active{% endif %}"
+                         id="data_{{ forloop.counter }}">
+                        {{ data_form }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingThree">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                   href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Infrastructures ({{ infra_forms|length }})
+                </a>
+            </h4>
+        </div>
+        <div id="collapseThree" class="panel-collapse collapse {{ infra_in }}" role="tabpanel"
+             aria-labelledby="headingThree"
+             style="padding: 5px;">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                {% for infra_form in infra_forms %}
+                    <li role="presentation" class="{% if forloop.last %}active{% endif %}"><a
+                            href="#infra_{{ forloop.counter }}"
+                            aria-controls="infra_{{ forloop.counter }}" role="tab"
+                            data-toggle="tab">Infrastructure {{ forloop.counter }}</a></li>
+                {% endfor %}
+                <li role="presentation" style="padding: 3px">
+                    <a href='#' class="btn btn-success btn-tab" id="add-infra" name="add-infra">Add</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                {% for infra_form in infra_forms %}
+                    <div role="tabpanel" class="tab-pane {% if forloop.last %}active{% endif %}"
+                         id="infra_{{ forloop.counter }}">
+                        {{ infra_form }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingFour">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                   href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    Results ({{ results_forms|length }})
+                </a>
+            </h4>
+        </div>
+        <div id="collapseFour" class="panel-collapse collapse {{ results_in }}" role="tabpanel" aria-labelledby="headingFour"
+             style="padding: 5px;">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                {% for results_form in results_forms %}
+                    <li role="presentation" class="{% if forloop.last %}active{% endif %}"><a
+                            href="#results_{{ forloop.counter }}"
+                            aria-controls="results_{{ forloop.counter }}" role="tab"
+                            data-toggle="tab">Results {{ forloop.counter }}</a></li>
+                {% endfor %}
+                <li role="presentation" style="padding: 3px">
+                    <a href='#' class="btn btn-success btn-tab" id="add-result" name="add-result">Add</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                {% for results_form in results_forms %}
+                    <div role="tabpanel" class="tab-pane {% if forloop.last %}active{% endif %}"
+                         id="results_{{ forloop.counter }}">
+                        {{ results_form }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

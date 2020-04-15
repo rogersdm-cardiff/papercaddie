@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+    <style>
+        body {
+            border: 5px solid {{ paper_colour }};
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <a href="{% url 'index' %}">Home</a>
+    <span style="float:right;">
+    {% if last_pk %}<a href="{% url 'extract' last_pk %}">Prev</a>{% else %}Prev{% endif %} | {% if next_pk %}
+        <a href="{% url 'extract' next_pk %}">Next</a>{% else %}Next{% endif %}
+    </span>
+
+    <div class="progress" style="margin: 0; margin-left: 90px; position: absolute; top: 20px; max-width: 1500px; width: 50%; height: 20px;">
+        <div class="progress-bar progress-bar-default progress-bar-striped" style="width: {{ percentages.progress }}%">{{ totals.progress }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-info progress-bar-striped" style="width: {{ percentages.skipped }}%">{{ totals.skipped }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: {{ percentages.rejected }}%">{{ totals.rejected }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: {{ percentages.background }}%">{{ totals.background }}
+            <span class="sr-only"></span>
+        </div>
+        <div class="progress-bar progress-bar-success progress-bar-striped" style="width: {{ percentages.completed }}%">{{ totals.completed }}
+            <span class="sr-only"></span>
+        </div>
+    </div>
+
+    <h4>{{ paper.title }} <small>{{ paper.comments }}</small></h4>
+    <div id='input-block' class='col-sm-12'>
+        <form id="input-form" class="form form-horizontal" action="{% url 'edit' paper.pk %}" method="post">
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingZero">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
+                                Details
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseZero" class="panel-collapse collapse in" role="tabpanel"
+                         aria-labelledby="headingZero"
+                         style="padding: 5px;">
+                        {% csrf_token %}
+                        {{ form }}
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingTwo">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Applications ({{ app_forms|length }})
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo"
+                         style="padding: 5px;">
+                        <div class="tab-content">
+                            <div class="row">
+                            {% for app_form in app_forms %}
+                                <div class="col-sm-{{ app_col }}">
+                                    {{ app_form }}
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                Data Sets ({{ data_forms|length }})
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne"
+                         style="padding: 5px;">
+                        <div class="tab-content">
+                            <div class="row">
+                            {% for data_form in data_forms %}
+                                <div class="col-sm-{{ data_col }}">
+                                    {{ data_form }}
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingFour">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Results ({{ results_forms|length }})
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseFour" role="tabpanel" aria-labelledby="headingFour"
+                         style="padding: 5px;">
+                        <div class="tab-content">
+                            <div class="row">
+                            {% for results_form in results_forms %}
+                                <div class="col-sm-{{ results_col }}">
+                                    {{ results_form }}
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
